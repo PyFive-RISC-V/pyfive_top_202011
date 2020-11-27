@@ -234,6 +234,7 @@ module pyfive_top (
 		ram_ack <= wb_cyc[4] & ~ram_ack;
 	end
 
+	assign wb_ack[4] = ram_ack;
 	assign wb_rdata[4] = ram_ack ? ram_rdata : 32'h00000000;
 
 	sram_1rw1r_32_256_8_sky130 ram_I (
