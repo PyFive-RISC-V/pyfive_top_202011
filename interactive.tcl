@@ -19,10 +19,10 @@ package require openlane;
 
 
 proc forbid_area_placement {args} {
-    puts_info " Forbidden zone handling..."
+	puts_info " Forbidden zone handling..."
 	set ::env(SAVE_DEF) $::env(TMP_DIR)/placement/$::env(DESIGN_NAME).forbid.def
-    try_catch python3 $::env(DESIGN_DIR)/scripts/place_forbid_area.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/forbid.log
-    set_def $::env(SAVE_DEF)
+	try_catch python3 $::env(DESIGN_DIR)/scripts/place_forbid_area.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/forbid.log
+	set_def $::env(SAVE_DEF)
 }
 
 
@@ -32,10 +32,10 @@ proc run_placement_pyfive {args} {
 
 	set ::env(CURRENT_STAGE) placement
 
-    if { [info exists ::env(PL_TARGET_DENSITY_CELLS)] } {
-        set old_pl_target_density $::env(PL_TARGET_DENSITY)
-        set ::env(PL_TARGET_DENSITY) $::env(PL_TARGET_DENSITY_CELLS)
-    }
+	if { [info exists ::env(PL_TARGET_DENSITY_CELLS)] } {
+		set old_pl_target_density $::env(PL_TARGET_DENSITY)
+		set ::env(PL_TARGET_DENSITY) $::env(PL_TARGET_DENSITY_CELLS)
+	}
 
 	if { $::env(PL_RANDOM_GLB_PLACEMENT) } {
 		# useful for very tiny designs
@@ -57,7 +57,7 @@ proc run_placement_pyfive {args} {
 
 	forbid_area_placement
 
-    detailed_placement_or
+	detailed_placement_or
 }
 
 
