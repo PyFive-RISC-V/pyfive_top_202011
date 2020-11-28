@@ -31,6 +31,9 @@ set ::env(VERILOG_FILES_BLACKBOX) [glob $::env(DESIGN_DIR)/macros/bb/*.v]
 set ::env(EXTRA_LEFS) [glob $::env(DESIGN_DIR)/macros/lef/*.lef]
 set ::env(EXTRA_GDS_FILES) [glob $::env(DESIGN_DIR)/macros/gds/*.gds]
 
+# Need blackbox for cells
+set ::env(SYNTH_READ_BLACKBOX_LIB) 1
+
 
 # Floorplanning
 # -------------

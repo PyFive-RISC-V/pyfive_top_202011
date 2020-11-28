@@ -17,6 +17,12 @@
 
 package require openlane;
 
+proc iobuf_placement {args} {
+	puts_info " Place IO buffer..."
+	set ::env(SAVE_DEF) $::env(TMP_DIR)/placement/$::env(DESIGN_NAME).iobuf.def
+	try_catch python3 $::env(DESIGN_DIR)/scripts/place_iobuf.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) -p $::env(FP_PIN_ORDER_CFG) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/iobuf.log
+	set_def $::env(SAVE_DEF)
+}
 
 proc forbid_area_placement {args} {
 	puts_info " Forbidden zone handling..."
@@ -31,6 +37,8 @@ proc run_placement_pyfive {args} {
 	puts_info "Running PyFive Placement..."
 
 	set ::env(CURRENT_STAGE) placement
+
+	iobuf_placement
 
 	if { [info exists ::env(PL_TARGET_DENSITY_CELLS)] } {
 		set old_pl_target_density $::env(PL_TARGET_DENSITY)

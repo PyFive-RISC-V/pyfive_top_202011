@@ -88,20 +88,121 @@ module pyfive_top (
 	assign one  = 1'b1;
 
 
+	// Buffers / Diodes
+	// ----------------
+
+	// Wishbone
+	wire        wb_clk_ibuf;
+	wire        wb_rst_ibuf;
+	wire        wbs_stb_ibuf;
+	wire        wbs_cyc_ibuf;
+	wire        wbs_we_ibuf;
+	wire  [3:0] wbs_sel_ibuf;
+	wire [31:0] wbs_dat_ibuf;
+	wire [23:0] wbs_adr_ibuf;
+
+	wire        wbs_ack_obuf;
+	wire [31:0] wbs_dat_obuf;
+
+	// IOs
+	wire [15:0] iobuf_in;
+	wire [15:0] iobuf_out;
+	wire [15:0] iobuf_oeb;
+
+	// Wishbone inputs
+`ifdef DIODE
+	(* keep *)
+	sky130_fd_sc_hd__diode_2 diode_wb_in[63:0] (
+		.DIODE({
+			wb_rst_i,
+			wbs_stb_i,
+			wbs_cyc_i,
+			wbs_we_i,
+			wbs_sel_i,
+			wbs_dat_i,
+			wbs_adr_i[23:0]
+		})
+	);
+`endif
+
+	sky130_fd_sc_hd__buf_8 buf_wb_in [63:0] (
+		.A({
+			wb_rst_i,
+			wbs_stb_i,
+			wbs_cyc_i,
+			wbs_we_i,
+			wbs_sel_i,
+			wbs_dat_i,
+			wbs_adr_i[23:0]
+		}),
+		.X({
+			wb_rst_ibuf,
+			wbs_stb_ibuf,
+			wbs_cyc_ibuf,
+			wbs_we_ibuf,
+			wbs_sel_ibuf,
+			wbs_dat_ibuf,
+			wbs_adr_ibuf
+		})
+	);
+
+	// Wishbone outputs
+	sky130_fd_sc_hd__buf_8 buf_wb_out[32:0] (
+		.A({wbs_ack_obuf, wbs_dat_obuf}),
+		.X({wbs_ack_o,    wbs_dat_o})
+	);
+
+`ifdef DIODE
+	(* keep *)
+	(* keep *)
+	sky130_fd_sc_hd__diode_2 diode_wb_out[32:0] (
+		.DIODE({wbs_ack_obuf, wbs_dat_obuf})
+	);
+`endif
+
+	// IOs inputs
+`ifdef DIODE
+	(* keep *)
+	(* keep *)
+	sky130_fd_sc_hd__diode_2 diode_io_in[15:0] (
+		.DIODE(io_in)
+	);
+`endif
+
+	sky130_fd_sc_hd__buf_8 buf_io_in[15:0] (
+		.A(io_in),
+		.X(iobuf_in)
+	);
+
+	// IOs outputs/enables
+	sky130_fd_sc_hd__buf_8 buf_io_out[31:0] (
+		.A({iobuf_oeb, iobuf_out}),
+		.X({io_oeb,    io_out   })
+	);
+
+`ifdef DIODE
+	(* keep *)
+	(* keep *)
+	sky130_fd_sc_hd__diode_2 diode_io_out[31:0] (
+		.DIODE({iobuf_oeb, iobuf_out}),
+	);
+`endif
+
+
 	// Bus interface
 	// -------------
 
 	wb_splitter #(
 		.N(N)
 	) bus_if_I (
-		.wbu_stb_i (wbs_stb_i),
-		.wbu_cyc_i (wbs_cyc_i),
-		.wbu_we_i  (wbs_we_i),
-		.wbu_sel_i (wbs_sel_i),
-		.wbu_dat_i (wbs_dat_i),
-		.wbu_adr_i (wbs_adr_i),
-		.wbu_ack_o (wbs_ack_o),
-		.wbu_dat_o (wbs_dat_o),
+		.wbu_stb_i (wbs_stb_ibuf),
+		.wbu_cyc_i (wbs_cyc_ibuf),
+		.wbu_we_i  (wbs_we_ibuf),
+		.wbu_sel_i (wbs_sel_ibuf),
+		.wbu_dat_i (wbs_dat_ibuf),
+		.wbu_adr_i ({8'h00, wbs_adr_ibuf}),
+		.wbu_ack_o (wbs_ack_obuf),
+		.wbu_dat_o (wbs_dat_obuf),
 		.wbd_addr  (wb_addr),
 		.wbd_rdata (wb_rdata_flat),
 		.wbd_wdata (wb_wdata),
@@ -262,32 +363,32 @@ module pyfive_top (
 	// ----------
 
 	// USB
-	assign io_out[2:0] = {  usb_pu_o,    usb_dp_o,  usb_dn_o  };
-	assign io_oeb[2:0] = { ~usb_pu_oe, ~usb_dp_oe, ~usb_dn_oe };
+	assign iobuf_out[2:0] = {  usb_pu_o,    usb_dp_o,  usb_dn_o  };
+	assign iobuf_oeb[2:0] = { ~usb_pu_oe, ~usb_dp_oe, ~usb_dn_oe };
 
-	assign { usb_dp_i, usb_dn_i } = io_in[1:0];
+	assign { usb_dp_i, usb_dn_i } = iobuf_in[1:0];
 
-	assign io_out[3] = usb_sof;
-	assign io_oeb[3] = 1'b0;
+	assign iobuf_out[3] = usb_sof;
+	assign iobuf_oeb[3] = 1'b0;
 
 	// MIDI
-	assign midi_rx = io_in[5];
-	assign io_out[4] = midi_tx;
-	assign io_oeb[5:4] = 2'b10;
+	assign midi_rx = iobuf_in[5];
+	assign iobuf_out[4] = midi_tx;
+	assign iobuf_oeb[5:4] = 2'b10;
 
 	// PCM
-	assign io_out[7:6] = pcm_audio_out;
-	assign io_oeb[7:6] = 2'b00;
+	assign iobuf_out[7:6] = pcm_audio_out;
+	assign iobuf_oeb[7:6] = 2'b00;
 
 	// Video
-	assign io_out[15:8] = { vid_data, vid_vsync, vid_hsync, vid_de, ~clk };
-	assign io_oeb[15:8] = 8'h00;
+	assign iobuf_out[15:8] = { vid_data, vid_vsync, vid_hsync, vid_de, ~clk };
+	assign iobuf_oeb[15:8] = 8'h00;
 
 
 	// Clock / Reset
 	// -------------
 
 	assign clk = wb_clk_i;
-	assign rst = wb_rst_i;
+	assign rst = wb_rst_ibuf;
 
 endmodule	// pyfive_top
