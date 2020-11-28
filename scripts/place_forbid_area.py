@@ -76,7 +76,7 @@ def is_bad_area(i):
 	for x0, y0, x1, y1, tgt_y in AREAS:
 		if (x0 <= x <= x1) and (y0 <= y <= y1):
 				return True
-	
+
 	return False
 
 
