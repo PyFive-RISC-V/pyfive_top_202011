@@ -31,6 +31,18 @@ proc forbid_area_placement {args} {
 	set_def $::env(SAVE_DEF)
 }
 
+proc insert_diode {args} {
+	puts_info " Insert diodes..."
+
+	# Custom insertion script
+	set ::env(SAVE_DEF) $::env(TMP_DIR)/placement/$::env(DESIGN_NAME).diodes.def
+	try_catch python3 $::env(DESIGN_DIR)/scripts/place_diodes.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/diodes.log
+	set_def $::env(SAVE_DEF)
+
+	# Legalize
+	detailed_placement
+}
+
 
 
 proc run_placement_pyfive {args} {
@@ -84,6 +96,7 @@ proc run_flow {args} {
 	run_floorplan
 	run_placement_pyfive
 	run_cts
+	insert_diode
 	gen_pdn
 	run_routing
 

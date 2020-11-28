@@ -9,7 +9,7 @@ set ::env(DESIGN_IS_CORE) 1
 
 # Diode insertion
 	#  Spray
-set ::env(DIODE_INSERTION_STRATEGY) 1
+set ::env(DIODE_INSERTION_STRATEGY) 0
 
 	# Smart-"ish"
 #set ::env(DIODE_INSERTION_STRATEGY) 3
