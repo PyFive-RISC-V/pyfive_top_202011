@@ -95,6 +95,12 @@ set ::env(GLB_RT_OBS) "li1 0.00 22.68 1748.00 486.24, li1 0.00 851.08 1748.00 48
 set ::env(MAGIC_DRC_USE_GDS) 0
 
 
+# Tape Out
+# --------
+
+set ::env(MAGIC_ZEROIZE_ORIGIN) 0
+
+
 # Cell library specific config
 # ----------------------------
 
