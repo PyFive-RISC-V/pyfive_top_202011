@@ -83,9 +83,13 @@ set ::env(GLB_RT_ALLOW_CONGESTION) 1
 # Avoid li1 for routing if possible
 set ::env(GLB_RT_MINLAYER) 2
 
+# Don't route on met5
+set ::env(GLB_RT_MAXLAYER) 5
+
 # Obstructions
     # li1 over the SRAM areas
-set ::env(GLB_RT_OBS) "li1 0.00 22.68 1748.00 486.24, li1 0.00 851.08 1748.00 486.24"
+	# met5 over the whole design
+set ::env(GLB_RT_OBS) "li1 0.00 22.68 1748.00 486.24, li1 0.00 851.08 1748.00 486.24, met5 0.0 0.0 1748.0 1360.0"
 
 
 # DRC
