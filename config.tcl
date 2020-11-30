@@ -55,8 +55,8 @@ set ::env(FP_PDN_VPITCH) [expr 861.37 / 7]
 
 	# Ensure we have one horizontal stripe in the very top/bot
 	# row of cell (not sure where 0.24 comes from ...)
-set ::env(FP_PDN_HOFFSET) [expr 13.62 + 0.24]
-set ::env(FP_PDN_HPITCH) 131.1
+set ::env(FP_PDN_HOFFSET) [expr 50 - (2.72 * 4) + 0.24]
+set ::env(FP_PDN_HPITCH) 180
 
 set ::env(PDN_CFG) $::env(DESIGN_DIR)/pdn.tcl
 
