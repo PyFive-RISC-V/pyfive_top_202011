@@ -189,7 +189,7 @@ class DiodeInserter:
 
 			# Determine the span of the signal and skip small internal nets
 			span = self.net_span(net)
-			if (span < 50000) and not self.net_from_pin(net):
+			if (span < 90000) and not self.net_from_pin(net):
 				print(f"[w] Skipping small net {net.getName():s} ({span:d})")
 				continue
 
