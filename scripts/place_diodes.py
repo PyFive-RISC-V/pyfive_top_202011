@@ -39,6 +39,12 @@ class DiodeInserter:
 		# Nothing found
 		return None
 
+	def net_from_pin(self, net):
+		for bt in net.getBTerms():
+			if bt.getIoType == 'INPUT':
+				return True
+		return False
+
 	def net_has_diode(self, net):
 		for it in net.getITerms():
 			cell_type = it.getInst().getMaster().getName()
@@ -181,10 +187,10 @@ class DiodeInserter:
 			# Find signal source (first one found ...)
 			src_pos = self.net_source(net)
 
-			# Determine the span of the signal
+			# Determine the span of the signal and skip small internal nets
 			span = self.net_span(net)
-			if span < 50000:
-				print(f"[w] Skipping small net {net.getName():s}")
+			if (span < 50000) and not self.net_from_pin(net):
+				print(f"[w] Skipping small net {net.getName():s} ({span:d})")
 				continue
 
 			# Scan all internal terminals
