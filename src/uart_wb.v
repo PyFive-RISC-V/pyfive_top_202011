@@ -190,8 +190,10 @@ module uart_wb #(
 				{ urf_empty, urf_overflow, utf_empty, utf_full, { (DW-DIV_WIDTH-4){1'b0} }, uart_div } :
 				{ urf_empty, { (DW-9){1'b0} }, urf_rdata };
 
-	always @(posedge clk)
-		if (ub_wr_div)
+	always @(posedge clk or posedge rst)
+		if (rst)
+			uart_div <= 0;
+		else if (ub_wr_div)
 			uart_div <= wb_wdata[DIV_WIDTH-1:0];
 
 	assign utf_wdata = wb_wdata[7:0];

@@ -36,7 +36,10 @@ module uart_rx #(
 		if (GLITCH_FILTER > 0)
 			glitch_filter #(
 				.L(GLITCH_FILTER),
-				.RST_VAL(1'b1),
+					// Because we trigger on falling, it's safer to reset
+					// state to 0. this way if we're at 0 at boot, we don't
+					// trigger a false falling edge
+				.RST_VAL(1'b0),
 				.WITH_SYNCHRONIZER(1)
 			) gf_I (
 				.in(rx),
