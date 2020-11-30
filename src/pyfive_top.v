@@ -9,6 +9,12 @@
 `define WITH_RAM
 
 module pyfive_top (
+	// Power
+`ifdef USE_POWER_PINS
+	input wire VPWR,
+	input wire VGND,
+`endif
+
 	// Wishbone Slave ports (WB MI A)
 	input  wire        wb_clk_i,
 	input  wire        wb_rst_i,
@@ -113,6 +119,12 @@ module pyfive_top (
 `ifdef DIODE
 	(* keep *)
 	sky130_fd_sc_hd__diode_2 diode_wb_in[63:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.DIODE({
 			wb_rst_i,
 			wbs_stb_i,
@@ -126,6 +138,12 @@ module pyfive_top (
 `endif
 
 	sky130_fd_sc_hd__buf_8 buf_wb_in [63:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.A({
 			wb_rst_i,
 			wbs_stb_i,
@@ -148,14 +166,25 @@ module pyfive_top (
 
 	// Wishbone outputs
 	sky130_fd_sc_hd__buf_8 buf_wb_out[32:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.A({wbs_ack_obuf, wbs_dat_obuf}),
 		.X({wbs_ack_o,    wbs_dat_o})
 	);
 
 `ifdef DIODE
 	(* keep *)
-	(* keep *)
 	sky130_fd_sc_hd__diode_2 diode_wb_out[32:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.DIODE({wbs_ack_obuf, wbs_dat_obuf})
 	);
 `endif
@@ -163,27 +192,49 @@ module pyfive_top (
 	// IOs inputs
 `ifdef DIODE
 	(* keep *)
-	(* keep *)
 	sky130_fd_sc_hd__diode_2 diode_io_in[15:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.DIODE(io_in)
 	);
 `endif
 
 	sky130_fd_sc_hd__buf_8 buf_io_in[15:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.A(io_in),
 		.X(iobuf_in)
 	);
 
 	// IOs outputs/enables
 	sky130_fd_sc_hd__buf_8 buf_io_out[31:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.A({iobuf_oeb, iobuf_out}),
 		.X({io_oeb,    io_out   })
 	);
 
 `ifdef DIODE
 	(* keep *)
-	(* keep *)
 	sky130_fd_sc_hd__diode_2 diode_io_out[31:0] (
+`ifdef USE_POWER_PINS
+		.VPWR(VPWR),
+		.VGND(VGND),
+		.VPB(VPWR),
+		.VNB(VGND),
+`endif
 		.DIODE({iobuf_oeb, iobuf_out}),
 	);
 `endif
