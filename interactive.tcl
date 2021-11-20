@@ -20,14 +20,14 @@ package require openlane;
 proc iobuf_placement {args} {
 	puts_info " Place IO buffer..."
 	set ::env(SAVE_DEF) $::env(TMP_DIR)/placement/$::env(DESIGN_NAME).iobuf.def
-	try_catch python3 $::env(DESIGN_DIR)/scripts/place_iobuf.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) -p $::env(FP_PIN_ORDER_CFG) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/iobuf.log
+	try_catch $::env(OPENROAD_BIN) -python $::env(DESIGN_DIR)/scripts/place_iobuf.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) -p $::env(FP_PIN_ORDER_CFG) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/iobuf.log
 	set_def $::env(SAVE_DEF)
 }
 
 proc forbid_area_placement {args} {
 	puts_info " Forbidden zone handling..."
 	set ::env(SAVE_DEF) $::env(TMP_DIR)/placement/$::env(DESIGN_NAME).forbid.def
-	try_catch python3 $::env(DESIGN_DIR)/scripts/place_forbid_area.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/forbid.log
+	try_catch $::env(OPENROAD_BIN) -python $::env(DESIGN_DIR)/scripts/place_forbid_area.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/forbid.log
 	set_def $::env(SAVE_DEF)
 }
 
@@ -36,7 +36,7 @@ proc insert_diode {args} {
 
 	# Custom insertion script
 	set ::env(SAVE_DEF) $::env(TMP_DIR)/placement/$::env(DESIGN_NAME).diodes.def
-	try_catch python3 $::env(DESIGN_DIR)/scripts/place_diodes.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/diodes.log
+	try_catch $::env(OPENROAD_BIN) -python $::env(DESIGN_DIR)/scripts/place_diodes.py -l $::env(MERGED_LEF) -id $::env(CURRENT_DEF) -o $::env(SAVE_DEF) |& tee $::env(TERMINAL_OUTPUT) $::env(LOG_DIR)/diodes.log
 	set_def $::env(SAVE_DEF)
 
 	# Legalize
@@ -68,12 +68,12 @@ proc run_placement_pyfive {args} {
 		set ::env(PL_TARGET_DENSITY) $old_pl_target_density
 	}
 
-	if { $::env(PL_RESIZER_OVERBUFFER) == 1} {
-		repair_wire_length
-	}
-	if { $::env(PL_OPENPHYSYN_OPTIMIZATIONS) == 1} {
-		run_openPhySyn
-	}
+#	if { $::env(PL_RESIZER_OVERBUFFER) == 1} {
+#		repair_wire_length
+#	}
+#	if { $::env(PL_OPENPHYSYN_OPTIMIZATIONS) == 1} {
+#		run_openPhySyn
+#	}
 
 	forbid_area_placement
 

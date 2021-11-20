@@ -7,7 +7,7 @@
 import argparse
 import re
 
-import opendbpy as odb
+import odb
 
 
 # ----------------------------------------------------------------------------

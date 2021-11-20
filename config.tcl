@@ -91,6 +91,16 @@ set ::env(GLB_RT_MAXLAYER) 5
 	# met5 over the whole design
 set ::env(GLB_RT_OBS) "li1 0.00 22.68 1748.00 486.24, li1 0.00 851.08 1748.00 486.24, met5 0.0 0.0 1748.0 1360.0"
 
+#Reduction in the routing capacity of the edges between the cells in the global routing graph. Values range from 0 to 1.
+#1 = most reduction, 0 = least reduction
+set ::env(GLB_RT_ADJUSTMENT) 0.70
+
+# per layer adjustment
+# 0 -> 1: 1 means don't use the layer
+# l2 is met1
+set ::env(GLB_RT_L2_ADJUSTMENT) 0.9
+set ::env(GLB_RT_L3_ADJUSTMENT) 0.7
+
 
 # DRC
 # ---
@@ -112,3 +122,13 @@ set filename $::env(DESIGN_DIR)/$::env(PDK)_$::env(STD_CELL_LIBRARY)_config.tcl
 if { [file exists $filename] == 1} {
 	source $filename
 }
+
+set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
+set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) 0
+set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) 0
+
+set ::env(FP_PDN_ENABLE_RAILS) 0
+
+set ::env(DIODE_INSERTION_STRATEGY) 0
+set ::env(FILL_INSERTION) 0

@@ -6,7 +6,7 @@
 
 import argparse
 
-import opendbpy as odb
+import odb
 
 
 # Arguments

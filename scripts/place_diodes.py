@@ -8,7 +8,7 @@ import argparse
 import random
 import sys
 
-import opendbpy as odb
+import odb
 
 
 class DiodeInserter:
@@ -42,7 +42,7 @@ class DiodeInserter:
 		fm = self.fake_diode_master
 
 		if fm.getSite() is None:
-			self.error("[!] Fake diode cell missing SITE attribute. Please fix LEF.")
+			self.error("[!] Fake diode cell missing SITE attribute");x
 		else:
 			if fm.getSite().getConstName() != tm.getSite().getConstName():
 				return False
@@ -71,14 +71,15 @@ class DiodeInserter:
 				return (x, y)
 
 		# Or maybe output of a cell
-		x = odb.new_int(0)
-		y = odb.new_int(0)
+		# x = odb.new_int(0)
+		# y = odb.new_int(0)
 
 		for it in net.getITerms():
 			if not it.isOutputSignal():
 				continue
-			if it.getAvgXY(x,y):
-				return ( odb.get_int(x), odb.get_int(y) )
+			found, x ,y =  it.getAvgXY()
+			if found:
+				return x,y
 
 		# Nothing found
 		return None
@@ -119,12 +120,13 @@ class DiodeInserter:
 		return (max(ys) - min(ys)) + (max(xs) - min(xs))
 
 	def pin_position(self, it):
-		px = odb.new_int(0)
-		py = odb.new_int(0)
+		# px = odb.new_int(0)
+		# py = odb.new_int(0)
 
-		if it.getAvgXY(px,py):
+		found, px, py = it.getAvgXY()
+		if found:
 			# Got it
-			return odb.get_int(px), odb.get_int(py)
+			return px, py
 		else:
 			# Failed, use the center coordinate of the instance as fall back
 			return it.getInst().getLocation()
@@ -336,6 +338,8 @@ di = DiodeInserter(block_design,
 	verbose = args.verbose
 )
 di.execute()
+
+print("Inserted", len(di.inserted), "diodes.")
 
 # Write result
 odb.write_def(block_design, output_def_file_name)
